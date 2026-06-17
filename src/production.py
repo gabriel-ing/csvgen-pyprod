@@ -25,7 +25,7 @@ class CSVGenProduction(Production):
                     "CSVGen.Router",
                     host_settings = {
                         "db_check_target":"ToCheckDB",
-                        "to_db_target":"ToDatabase",
+                        "to_db_target":"ToDB",
                         "default_schema":"CSVGen.Tables"
                     } 
                     )
