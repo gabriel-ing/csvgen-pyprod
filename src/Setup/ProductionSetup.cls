@@ -10,15 +10,15 @@ ClassMethod Setup(fileWatcherRoot As %String, envSetup As %Boolean = 0) As %Stat
     import os
     from pathlib import Path
 
-    lib_dir = iris.system.Util.InstallDirectory() + "lib/csvgen/"
-    print(lib_dir)
+    lib_dir = iris.system.Util.InstallDirectory() + "lib/"
+    #; print(lib_dir)
     if lib_dir not in sys.path:
         sys.path.insert(0, lib_dir)
 
     pyprod_bin_path = Path(intersystems_pyprod.__file__).resolve().parent.parent / "bin"
 
     path_entries = os.environ.get("PATH", "").split(os.pathsep)
-    print(pyprod_bin_path)
+    #; print(pyprod_bin_path)
     if str(pyprod_bin_path) not in path_entries:
         path_entries.append(str(pyprod_bin_path))
         os.environ["PATH"] = os.pathsep.join(path_entries)
@@ -29,25 +29,26 @@ ClassMethod Setup(fileWatcherRoot As %String, envSetup As %Boolean = 0) As %Stat
     iris.cls("Setup.ProductionSetup").DirectorySetup(fileWatcherRoot)
 
     result = sb.run(
-        f"intersystems_pyprod {lib_dir}csvgen_pyprod/components.py",
+        f"intersystems_pyprod {lib_dir}csvgen-pyprod/components.py",
         capture_output=True,
         text=True,
+        check=True,
         shell=True,
+
     )
 
-    result = sb.run(f"intersystems_pyprod {lib_dir}csvgen_pyprod/production.py",
+    print(result.stdout, result.stderr)
+    result = sb.run(f"intersystems_pyprod {lib_dir}csvgen-pyprod/production.py",
         capture_output=True,
         shell=True,
-        text=True
+        text=True,
+        check=True
     )
 
     print(result.stderr)
 
     #; sb.run(f"intersystems_pyprod {lib_dir}csvgen_pyprod/production.py", check=True, shell=True)
 
-    status = intersystems_pyprod.director.start_production("CsvgenPyprod.Prod")
-    if status!= 1:
-        intersystems_pyprod.director.restart_production()
     
     return 1 
 }
@@ -59,13 +60,13 @@ ClassMethod SetupEnv() As %Status [ Language = python ]
 
     install_dir = iris.system.Util.InstallDirectory()
     namespace = iris._SYSTEM.SYS.NameSpace()
-    print(namespace)
+    #; print(namespace)
     os.environ["IRISINSTALLDIR"] = install_dir
     os.environ["IRISNAMESPACE"] = namespace
     os.environ["IRISUSERNAME"] = "SuperUser"
     os.environ["IRISPASSWORD"] = "SYS"
 
-    lib_python = install_dir + "mgr/python"
+    lib_python = install_dir + "lib/python"
     bin_python = lib_python + "/bin"
 
     existing_pythonpath = os.environ.get("PYTHONPATH", "")
@@ -101,7 +102,7 @@ ClassMethod DirectorySetup(fileWatcherRoot as %String) As %Status [language=pyth
         if not os.path.exists(subdir_path):
             os.makedirs(subdir_path)
 
-    production_py =  iris.system.Util.InstallDirectory() +"lib/csvgen/csvgen_pyprod/production.py"
+    production_py =  iris.system.Util.InstallDirectory() +"lib/csvgen-pyprod/production.py"
     with open(production_py, "r") as f:
         content = f.read()
 
@@ -116,6 +117,17 @@ ClassMethod DirectorySetup(fileWatcherRoot as %String) As %Status [language=pyth
         f.write(content)
 
     return 1
+}
+
+ClassMethod StartProduction()As %Status [language=python]
+{
+    from intersystems_pyprod import director
+    print("Starting Production...")
+    status = director.start_production("CsvgenPyprod.Prod")
+    if status!= 1:
+        status = director.restart_production()
+
+    return status 
 }
 
 }

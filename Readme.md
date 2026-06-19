@@ -90,6 +90,30 @@ By default, this will not set any of the required environmental variables requir
 zpm "instal csvgen-pyprod -v -DenvSetup 1"
 ```
 
+Unfortunately, despite my best efforts I haven't managed to get the production to start automatically without the install erroring, so to start the production run: 
+
+```objectscript
+do ##class(Setup.Production).StartProduction()
+```
+Or: 
+
+```bash
+python3 -c "from intersystems_pyprod import director; director.start_production("CSVGenPyProd.Prod")
+```
+
+Please note, if you get an `IrisSecureStart failed: IRIS_ACCESSDENIED (-15)`, this means Callin is not enabled, which is required for PyProd. This can be fixed with: 
+
+```objectscript 
+    zn "%SYS"
+
+    ; enabling callin for Embedded Python
+    do ##class(Security.Services).Get("%Service_CallIn",.prop)
+    set prop("Enabled")=1
+    set prop("AutheEnabled")=48
+    do ##class(Security.Services).Modify("%Service_CallIn",.prop)
+    
+```
+
 ## PyProd Setup
 
 Set the following environment variables so Python can locate the IRIS libraries:

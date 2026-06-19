@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Export generator="Cache" version="25">
-  <Document name="csvgen-prod.ZPM">
+  <Document name="csvgen-pyprod.ZPM">
     <Module>
-      <Name>csvgen-prod</Name>
+      <Name>csvgen-pyprod</Name>
       <Version>1.0.0</Version>
       <Description>CSV to Table production using intersystems-pyprod</Description>
       <Author>
@@ -17,11 +17,11 @@
         <Parameter Name="ExtraPipFlags">--upgrade</Parameter>
       </Defaults>
       <Default Name="envSetup" Value="0"/>
-      <Default Name="fileWatcherRoot" Value="${libdir}/csvgen_pyprod"/>
+      <Default Name="fileWatcherRoot" Value="${libdir}/csvgen-pyprod"/>
       <SourcesRoot>src</SourcesRoot>
 
       <!-- Deploy Python source so it is importable as the csvgen_pyprod package -->
-      <FileCopy Name="src/csvgen_pyprod/" Target="${libdir}/csvgen_pyprod/"/>
+      <FileCopy Name="src/csvgen-pyprod/" Target="${libdir}/csvgen-pyprod/"/>
 
       <Resource Name="Setup.ProductionSetup.cls"/>
 
@@ -31,8 +31,7 @@
         <Arg>${fileWatcherRoot}</Arg>
         <Arg>${envSetup}</Arg>
       </Invoke>
-
-      <AfterInstallMessage>CSVGen installed. Configure inbound/working/archive directories on each host item, then start the production from the Management Portal or via: do ##class(Setup.ProductionSetup).Start()</AfterInstallMessage>
+      <Invoke Class="Setup.ProductionSetup" Method="StartProduction" CustomPhase="start" When="After"></Invoke>
     </Module>
   </Document>
 </Export>

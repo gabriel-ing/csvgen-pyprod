@@ -1,7 +1,7 @@
 {
     "objectscript.conn": {
         "server": "62773",
-        "ns": "ENSEMBLE",
-        "active": true
+        "ns": "USER",
+        "active": false
     }
 }
