@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Export generator="Cache" version="25">
-  <Document name="csvgen_prod.ZPM">
+  <Document name="csvgen-prod.ZPM">
     <Module>
-      <Name>csvgen_prod</Name>
+      <Name>csvgen-prod</Name>
       <Version>1.0.0</Version>
-      <Description>CSV to IRIS database production using intersystems-pyprod</Description>
+      <Description>CSV to Table production using intersystems-pyprod</Description>
       <Author>
         <Person>Gabriel Ing</Person>
         <Organization>InterSystems</Organization>
@@ -17,11 +17,11 @@
         <Parameter Name="ExtraPipFlags">--upgrade</Parameter>
       </Defaults>
       <Default Name="envSetup" Value="0"/>
-      <Default Name="fileWatcherRoot" Value="/home/irisowner/dev/Data"/>
+      <Default Name="fileWatcherRoot" Value="${libdir}/csvgen_pyprod"/>
       <SourcesRoot>src</SourcesRoot>
 
       <!-- Deploy Python source so it is importable as the csvgen_pyprod package -->
-      <FileCopy Name="src/csvgen_pyprod/" Target="${libdir}csvgen/csvgen_pyprod/"/>
+      <FileCopy Name="src/csvgen_pyprod/" Target="${libdir}/csvgen_pyprod/"/>
 
       <Resource Name="Setup.ProductionSetup.cls"/>
 

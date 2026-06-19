@@ -7,20 +7,22 @@ ENV IRISUSERNAME "SuperUser"
 ENV IRISPASSWORD "SYS"
 ENV IRISNAMESPACE "ENSEMBLE"
 ENV COMLIB "$IRISINSTALLDIR/bin"
-ENV PYTHONPATH "$IRISINSTALLDIR/lib/python"
-ENV PATH "/usr/irissys/lib/python/bin:/usr/irissys/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/irisowner/bin:/home/irisowner/.local/bin"
+ENV PYTHONPATH "$IRISINSTALLDIR/lib/python:$IRISINSTALLDIR/mgr/python"
+ENV PATH "/usr/irissys/mgr/python/bin:/usr/irissys/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/irisowner/bin:/home/irisowner/.local/bin"
 
 
 WORKDIR /home/irisowner/dev
 COPY . .
 
+RUN python3 -m pip install -r requirements.txt --target /usr/irissys/mgr/python --upgrade
 
-COPY ./startup.py /tmp/startup.py 
+
 RUN --mount=type=bind,src=.,dst=. \
     iris start IRIS && \
     iris merge IRIS merge.cpf && \
-	irispython /tmp/startup.py && \
-    echo "python done" &&\
+    iris session iris < iris.script &&\
+    intersystems_pyprod /home/irisowner/dev/src/csvgen_pyprod/components.py &&\
+    intersystems_pyprod /home/irisowner/dev/src/csvgen_pyprod/production.py &&\
     iris stop IRIS quietly saftely
 
     

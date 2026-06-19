@@ -25,7 +25,7 @@ http://localhost:62773/csp/ensemble/EnsPortal.ProductionConfig.zen?$NAMESPACE=EN
 
 Or with the `controls.py` file:
 
-```
+```bash
 python3 controls.py start CsvgenPyprod.Prod
 ```
 
@@ -54,6 +54,42 @@ intersystems_pyprod src/csvgen_pyprod/components.py
 intersystems_pyprod src/csvgen_pyprod/production.py
 ```
 
+If you make any changes to the code while the production is running, the production will need to restart before the changes are reflected!
+
+You can start the production with the handy CLI: 
+
+```bash
+python3 src/csvgen_pyprod/controls.py start CSVGenPyProd.Prod
+```
+
+To see the production in action, throw any random 
+
+
+## IPM Install
+
+This production has been packaged with IPM and is installable with a single command: 
+
+```
+zpm "install csvgen-pyprod -v"
+```
+
+This, by default, will install this production in `/usr/irissys/lib/csvgen-pyprod`, and will create directories for the file watching (an `IN` folder, an `OUT` folder and a `WORKING` folder) here inside a directory called `Data`. 
+
+To change the location of the file processing directory, you can change this with an install argument: 
+
+```
+zpm "install csvgen-pyprod -v -DfileWatcherRoot 'home/irisowner/dev'
+```
+
+By default, this will not set any of the required environmental variables required for PyProd to work, and will therefore fail on installation if you have not set the environment as detailed in the [PyProd Setup](#pyprod-setup) section below. However, if you would like to automatically set these variables up, you can add a `-DenvSetup 1` flag.
+
+> [!Warning]
+> The command below will change environmental variables, including setting default IRISUSERNAME and IRISPASSWORD. Use with caution
+
+```
+zpm "instal csvgen-pyprod -v -DenvSetup 1"
+```
+
 ## PyProd Setup
 
 Set the following environment variables so Python can locate the IRIS libraries:
@@ -64,12 +100,13 @@ export LD_LIBRARY_PATH="$IRISINSTALLDIR/bin:$LD_LIBRARY_PATH"
 export IRISUSERNAME="SuperUser"
 export IRISPASSWORD="SYS"
 export IRISNAMESPACE="ENSEMBLE"
-export PYTHONPATH="$IRISINSTALLDIR/lib/python"
-export PATH="/usr/irissys/lib/python/bin:$PATH"
+export PYTHONPATH="$IRISINSTALLDIR/mgr/python"
+export PATH="/usr/irissys/mgr/python/bin:$PATH"
 ```
 
 Then install the PyProd package into the IRIS Python environment:
 
 ```bash
-python3 -m pip install intersystems_pyprod --target /usr/irissys/lib/python
+python3 -m pip install intersystems_pyprod --target /usr/irissys/mgr/python --update
 ```
+

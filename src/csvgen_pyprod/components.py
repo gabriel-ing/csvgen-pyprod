@@ -1,3 +1,10 @@
+
+import os
+import csv
+import datetime
+import re
+
+import iris
 from intersystems_pyprod import (
     InboundAdapter,
     BusinessService,
@@ -10,12 +17,7 @@ from intersystems_pyprod import (
     IRISParameter,
     Column
 )
-import os
-import iris
 import pandas as pd
-import csv
-import datetime
-import re
 
 iris_package_name = "CsvgenPyprod"
 
@@ -69,7 +71,7 @@ class CSVInboundAdapter(InboundAdapter):
         super().__init__(iris_host_object)
         self.processed_files = {}
 
-    def OnTask(self):
+    def on_task(self):
         # OnTask is called on a schedule by the production framework
         i = 0
 
@@ -266,5 +268,3 @@ class Router(BusinessProcess):
 
         return Status.OK()
 
-    def on_response(self, a, b, c,d,e):
-        return Status.OK()
