@@ -12,22 +12,15 @@ ENV PATH "/usr/irissys/lib/python/bin:/usr/irissys/bin:/usr/local/sbin:/usr/loca
 
 
 WORKDIR /home/irisowner/dev
-COPY src src
-
-# COPY src/pyprod /home/irisowner/dev/pyprod
-# RUN chown -R irisowner:irisowner /home/irisowner/dev/pyprod
+COPY . .
 
 
-RUN python3 -m pip install --break-system-packages intersystems_pyprod --target /usr/irissys/lib/python
-RUN python3 -m pip install --target /usr/irissys/lib/python --break-system-packages -r src/requirements.txt
-
+COPY ./startup.py /tmp/startup.py 
 RUN --mount=type=bind,src=.,dst=. \
     iris start IRIS && \
     iris merge IRIS merge.cpf && \
-	iris session IRIS < iris.script && \
-    intersystems_pyprod src/components.py && \
-    intersystems_pyprod src/production.py &&\
-    python3 src/controls.py start CSVGen.CSVGenProduction &&\
-    iris stop IRIS quietly
+	irispython /tmp/startup.py && \
+    echo "python done" &&\
+    iris stop IRIS quietly saftely
 
     

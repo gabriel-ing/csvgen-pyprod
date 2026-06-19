@@ -17,7 +17,7 @@ import csv
 import datetime
 import re
 
-iris_package_name = "CSVGen"
+iris_package_name = "CsvgenPyprod"
 
 def _clean(name):
     # Strip invalid chars and prefix with underscore if starts with digit or string is empty
@@ -118,7 +118,7 @@ class CSVInboundAdapter(InboundAdapter):
 
 # BusinessService receives input from the adapter, builds a message, and forwards it into the production.
 class FromCSV(BusinessService):
-    ADAPTER:str = IRISParameter(value="CSVGen.CSVInboundAdapter", description="CSV Watcher inbound adapter")
+    ADAPTER:str = IRISParameter(value="CsvgenPyprod.CSVInboundAdapter", description="CSV Watcher inbound adapter")
     process_target:str = IRISProperty(description="Business process to send message to", settings="Target Settings")
 
     def on_process_input(self, file_path):

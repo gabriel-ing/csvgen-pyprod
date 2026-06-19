@@ -3,3 +3,5 @@ src/pyprod/
 **/__pycache__/
 **/.pytest_cache/
 **/iris-main.log
+DATA/OUT/*.csv*
+.vscode
