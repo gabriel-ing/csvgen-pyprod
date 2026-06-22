@@ -1,4 +1,4 @@
-# CsvgenPyprod production in PyProd
+# csvgen-pyprod – a production for creating IRIS tables from CSV files
 
 This project implements a `csvgen` interoperability production with InterSystems PyProd. It watches a directory for new CSV files (InboundAdapter + Business Service), passes them to a router (Business Process), which first sends a synchronous request to the `ToCheckDB` host (Business Operation) to check whether a table with the same name as the file already exists. The result is passed back to the router, which may then send a create-table request to `ToDB` (Business Operation), and finally sends a request to `ToDB` to insert the data.
 
@@ -26,6 +26,8 @@ http://localhost:62773/csp/ensemble/EnsPortal.ProductionConfig.zen?$NAMESPACE=EN
 Or with the `controls.py` file:
 
 ```bash
+docker-compose exec -it iris bash 
+cd /src/csvgen-pyprod
 python3 controls.py start CsvgenPyprod.Prod
 ```
 
@@ -33,7 +35,6 @@ After this, you can test the production by placing any CSV file into the `./IN` 
 
 > [!WARNING]
 > This interoperability production is meant as a demo application to show the use of PyProd. It is not designed for production usage.
-
 
 ## Manual Loading
 
